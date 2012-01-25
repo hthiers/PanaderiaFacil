@@ -7,7 +7,7 @@ import cl.ht.facturacion.client.vo.VOCliente;
 import cl.ht.facturacion.client.vo.VOFactura;
 import cl.ht.facturacion.client.vo.VOGuia;
 import cl.ht.facturacion.client.vo.VOItemProducto;
-import cl.ht.facturacion.client.vo.VOItemProductoX;
+import cl.ht.facturacion.client.vo.VOItemProducto;
 import cl.ht.facturacion.client.vo.VOProducto;
 
 public interface DAOGuias {
@@ -20,13 +20,13 @@ public interface DAOGuias {
 	
 	public void newItemGuia(String codproducto, String cantidad, String precio, String total);
 	public void newItemGuia(VOItemProducto item);
-	public void newItemProducto(VOItemProductoX item);
+	public void newItemProducto(VOItemProducto item);
 	public boolean addItemsToGuia(ArrayList<VOItemProducto> itemsGuia, VOGuia guia);
 	
 	public VOItemProducto getItemProductoByProductoID(VOProducto producto);
 	public VOItemProducto getItemProductoByProductoYGuia(VOProducto producto, VOGuia guia);
 	public VOItemProducto getItemProductoByProductoYGuia(int idProducto, int idGuia);
-	public ArrayList<VOItemProductoX> getAllItemProductoByGuia(VOGuia guia); //TEST BIGDECIMAL
+	public ArrayList<VOItemProducto> getAllItemProductoByGuia(VOGuia guia); //TEST BIGDECIMAL
 	
 	public VOGuia getGuiaByNumero(int numeroGuia, boolean nulas);
 	public VOGuia getGuiaByID(int idGuia);

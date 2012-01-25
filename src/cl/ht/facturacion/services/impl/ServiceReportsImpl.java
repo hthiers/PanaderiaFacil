@@ -1,5 +1,6 @@
 package cl.ht.facturacion.services.impl;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Iterator;
@@ -8,7 +9,6 @@ import cl.ht.facturacion.client.util.Utils;
 import cl.ht.facturacion.client.vo.VOFactura;
 import cl.ht.facturacion.client.vo.VOGuia;
 import cl.ht.facturacion.client.vo.VOItemProducto;
-import cl.ht.facturacion.client.vo.VOItemProductoX;
 import cl.ht.facturacion.dao.connection.DBConnectionSing;
 import cl.ht.facturacion.dao.impl.DAOFacturasImpl;
 import cl.ht.facturacion.dao.impl.DAOGuiasImpl;
@@ -22,7 +22,7 @@ public class ServiceReportsImpl implements ServiceReports {
 		
 		ArrayList<String> reportes = new ArrayList<String>();
 		DAOGuiasImpl daoGuias = new DAOGuiasImpl();
-	    int totalVentaGuias = 0;
+	    BigDecimal totalVentaGuias = new BigDecimal(0);
 	    int totalNumeroGuias = 0;
 
 	    Calendar fechaDesde = Utils.getDateByMonth(mes);
@@ -42,7 +42,7 @@ public class ServiceReportsImpl implements ServiceReports {
 	    while(itguias.hasNext()) {
 	    	VOGuia guia = (VOGuia)itguias.next();
 	    	
-	    	totalVentaGuias += Utils.doubleToInt(guia.getTotal());
+	    	totalVentaGuias.add(guia.getTotal());
 	    }
 	    
 	    reportes.add("Número de guías emitidas: "+totalNumeroGuias);
@@ -55,10 +55,10 @@ public class ServiceReportsImpl implements ServiceReports {
 	public ArrayList<String> getFacturasReportByDate(String mes) {
 		ArrayList<String> reportes = new ArrayList<String>();
 		DAOFacturasImpl daoFacturas = new DAOFacturasImpl();
-	    int totalVenta = 0;
+	    BigDecimal totalVenta = new BigDecimal(0);
 	    int facturasEmitidas = 0;
-	    int kgsEmitido = 0;
-	    int totalIVA = 0;
+	    BigDecimal kgsEmitido = new BigDecimal(0);
+	    BigDecimal totalIVA = new BigDecimal(0);
 
 	    Calendar fechaDesde = Utils.getDateByMonth(mes);
 		Calendar fechaHasta = Utils.getNextDateByMonth(mes);
@@ -76,14 +76,14 @@ public class ServiceReportsImpl implements ServiceReports {
 	    	ArrayList<VOGuia> listaGuias = daoGuias.getAllGuiasByFactura(factura.getId());
 	    	
 	    	for(int x=0; x<listaGuias.size(); x++) {
-	    		ArrayList<VOItemProductoX> listaItems = daoGuias.getAllItemProductoByGuia(listaGuias.get(x));
+	    		ArrayList<VOItemProducto> listaItems = daoGuias.getAllItemProductoByGuia(listaGuias.get(x));
 	    		for(int i=0; i<listaItems.size(); i++) {
-	    			kgsEmitido += listaItems.get(i).getCantidad();
+	    			kgsEmitido.add(listaItems.get(i).getCantidad());
 	    		}
 	    	}
 	    	
-	    	totalVenta += Utils.doubleToInt(factura.getValorTotal());
-	    	totalIVA += totalVenta * 0.19;
+	    	totalVenta.add(factura.getValorTotal());
+	    	totalIVA.add(totalVenta.multiply(new BigDecimal(0.19)));
 	    }
 		
 	    reportes.add("Número de facturas emitidas: "+facturasEmitidas);

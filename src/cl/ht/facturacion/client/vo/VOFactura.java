@@ -1,5 +1,6 @@
 package cl.ht.facturacion.client.vo;
 
+import java.math.BigDecimal;
 import java.util.Calendar;
 
 public class VOFactura {
@@ -8,9 +9,9 @@ public class VOFactura {
 	private int numero;
 	private int idCliente;
 	private Calendar fecha;
-	private double valorNeto;
-	private double valorIva;
-	private double valorTotal;
+	private BigDecimal valorNeto;
+	private BigDecimal valorIva;
+	private BigDecimal valorTotal;
 	
 	public VOFactura() {
 		super();
@@ -18,7 +19,7 @@ public class VOFactura {
 	}
 
 	public VOFactura(int id, int numero, int idCliente, Calendar fecha,
-			double valorNeto, double valorIva, double valorTotal) {
+			BigDecimal valorNeto, BigDecimal valorIva, BigDecimal valorTotal) {
 		super();
 		this.id = id;
 		this.numero = numero;
@@ -61,27 +62,27 @@ public class VOFactura {
 		this.fecha = fecha;
 	}
 
-	public double getValorNeto() {
-		return valorNeto;
+	public BigDecimal getValorNeto() {
+		return valorNeto.setScale(0,BigDecimal.ROUND_HALF_UP);
 	}
 
-	public void setValorNeto(double valorNeto) {
+	public void setValorNeto(BigDecimal valorNeto) {
 		this.valorNeto = valorNeto;
 	}
 
-	public double getValorIva() {
-		return valorIva;
+	public BigDecimal getValorIva() {
+		return valorIva.setScale(0,BigDecimal.ROUND_HALF_UP);
 	}
 
-	public void setValorIva(double valorIva) {
+	public void setValorIva(BigDecimal valorIva) {
 		this.valorIva = valorIva;
 	}
 
-	public double getValorTotal() {
-		return valorTotal;
+	public BigDecimal getValorTotal() {
+		return valorTotal.setScale(0,BigDecimal.ROUND_HALF_UP);
 	}
 
-	public void setValorTotal(double valorTotal) {
+	public void setValorTotal(BigDecimal valorTotal) {
 		this.valorTotal = valorTotal;
 	}
 	

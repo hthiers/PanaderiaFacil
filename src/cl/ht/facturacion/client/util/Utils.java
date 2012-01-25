@@ -31,7 +31,6 @@ import cl.ht.facturacion.client.vo.VOCliente;
 import cl.ht.facturacion.client.vo.VOFactura;
 import cl.ht.facturacion.client.vo.VOGuia;
 import cl.ht.facturacion.client.vo.VOItemProducto;
-import cl.ht.facturacion.client.vo.VOItemProductoX;
 import cl.ht.facturacion.client.vo.VOProducto;
 import cl.ht.facturacion.dao.impl.DAOClientesImpl;
 import cl.ht.facturacion.dao.impl.DAOGuiasImpl;
@@ -261,7 +260,7 @@ public class Utils {
 		return stringMes;
 	}
 	
-	public static void imprimirGuia(Shell shell, VOGuia guia, VOCliente cliente, ArrayList<VOItemProductoX> listaItems, String fecha) {
+	public static void imprimirGuia(Shell shell, VOGuia guia, VOCliente cliente, ArrayList<VOItemProducto> listaItems, String fecha) {
 		PrintDialog dialog = new PrintDialog(shell);
 	    // Opens a dialog and let use user select the 
 	    // target printer and configure various settings.
@@ -340,35 +339,35 @@ public class Utils {
 		        	//Detalle venta
 		        	fila = 205;
 		        	
-		        	Iterator<VOItemProductoX> itemsIt = listaItems.iterator();
+		        	Iterator<VOItemProducto> itemsIt = listaItems.iterator();
 		        	while(itemsIt.hasNext()) {
-		        		VOItemProductoX item = itemsIt.next();
+		        		VOItemProducto item = itemsIt.next();
 
 		        		System.out.println("guia #"+guia.getNumero());
 		        		System.out.println("item ID:"+item.getId());
-		        		System.out.println("cantidad: "+item.getCantidad());
+		        		System.out.println("cantidad: "+item.getCantidad().toString());
 		        		System.out.println("detalle: "+item.getIdprod().getDescripcion());
 		        		System.out.println("precio unit: "+item.getPrecio());
-		        		System.out.println("total unit: "+item.getTotal());
+		        		System.out.println("total unit: "+item.getTotal().toString());
 		        		
 		        		columna = 10;
-		        		gc.drawString(""+item.getCantidad(), columna, fila);
+		        		gc.drawString(item.getCantidad().toString(), columna, fila);
 		        		
 		        		columna = 110;
 		        		gc.drawString(item.getIdprod().getDescripcion(), columna, fila);
-		        		
+
 		        		columna = 680;
 		        		gc.drawString(""+item.getPrecio(), columna, fila);
 		        		
 		        		columna = 810;
-		        		gc.drawString(""+item.getTotal(), columna, fila);
+		        		gc.drawString(item.getTotal().toString(), columna, fila);
 		        		
 		        		fila += 10;
 		        	}
 		        	
 		        	//total de venta (guia)
 		        	fila = 380;
-		        	int totalGuia = (int) guia.getTotal();
+		        	int totalGuia = guia.getTotal().toBigInteger().intValue();
 		        	gc.drawString(""+totalGuia, columna, fila);
 		        	
 		          // Finishes the page. 
@@ -444,19 +443,19 @@ public class Utils {
 		        	//Detalle venta
 		        	fila = 205;
 		        	
-		        	Iterator<VOItemProductoX> itemsIt = listaItems.iterator();
+		        	Iterator<VOItemProducto> itemsIt = listaItems.iterator();
 		        	while(itemsIt.hasNext()) {
-		        		VOItemProductoX item = itemsIt.next();
+		        		VOItemProducto item = itemsIt.next();
 
 		        		System.out.println("guia #"+guia.getNumero());
 		        		System.out.println("item ID:"+item.getId());
-		        		System.out.println("cantidad: "+item.getCantidad());
+		        		System.out.println("cantidad: "+item.getCantidad().toString());
 		        		System.out.println("detalle: "+item.getIdprod().getDescripcion());
 		        		System.out.println("precio unit: "+item.getPrecio());
-		        		System.out.println("total unit: "+item.getTotal());
+		        		System.out.println("total unit: "+item.getTotal().toString());
 		        		
 		        		columna = 10;
-		        		gc.drawString(""+item.getCantidad(), columna, fila);
+		        		gc.drawString(""+item.getCantidad().toString(), columna, fila);
 		        		
 		        		columna = 110;
 		        		gc.drawString(item.getIdprod().getDescripcion(), columna, fila);
@@ -465,14 +464,14 @@ public class Utils {
 		        		gc.drawString(""+item.getPrecio(), columna, fila);
 		        		
 		        		columna = 810;
-		        		gc.drawString(""+item.getTotal(), columna, fila);
+		        		gc.drawString(""+item.getTotal().toString(), columna, fila);
 		        		
 		        		fila += 10;
 		        	}
 		        	
 		        	//total de venta (guia)
 		        	fila = 380;
-		        	int totalGuia = (int) guia.getTotal();
+		        	int totalGuia = guia.getTotal().toBigInteger().intValue();
 		        	gc.drawString(""+totalGuia, columna, fila);
 		        	
 		          // Finishes the page. 
@@ -586,9 +585,9 @@ public class Utils {
 		        		listaGuias = new ArrayList<VOGuia>();
 			        	listaGuias = daoGuias.getAllGuiasByFacturaProducto(factura.getId(),listaProductos.get(x).getId());
 			        	
-			        	int cantidadProducto = 0;
+			        	BigDecimal cantidadProducto = new BigDecimal(0);
 			        	int valorProducto = 0;
-			        	int totalFinalProducto = 0;
+			        	BigDecimal totalFinalProducto = new BigDecimal(0);
 			        	
 			        	Iterator<VOGuia> guiasIt = listaGuias.iterator();
 			        	while(guiasIt.hasNext()) {
@@ -596,8 +595,8 @@ public class Utils {
 			        		itemProducto = daoGuias.getItemProductoByProductoYGuia(listaProductos.get(x).getId(), guia.getId());
 			        		
 			        		valorProducto = itemProducto.getPrecio();
-			        		cantidadProducto += itemProducto.getCantidad();
-			        		totalFinalProducto += itemProducto.getTotal();
+			        		cantidadProducto = itemProducto.getCantidad();
+			        		totalFinalProducto = itemProducto.getTotal();
 			        	}
 			        	
 			        	/*
@@ -608,12 +607,12 @@ public class Utils {
 			        	
 			        	//Imprimir cantidad, detalle nombre y total vendido del producto x de todas las guias en cuestion (segun factura)
 
-			        	System.out.println("@kg: "+cantidadProducto);
+			        	System.out.println("@kg: "+cantidadProducto.toString());
 			        	System.out.println("@precio: "+valorProducto);
-			        	System.out.println("@total (kg x precio): "+totalFinalProducto);
+			        	System.out.println("@total (kg x precio): "+totalFinalProducto.toString());
 			        	
 			        	columna = 10;
-		        		gc.drawString(""+cantidadProducto, columna, fila);
+		        		gc.drawString(cantidadProducto.toString(), columna, fila);
 		        		
 		        		columna = 110;
 		        		gc.drawString(""+listaProductos.get(x).getDescripcion().toUpperCase(), columna, fila);
@@ -622,7 +621,7 @@ public class Utils {
 		        		gc.drawString(""+valorProducto, columna, fila);
 		        		
 			        	columna = 810;
-			        	gc.drawString(""+totalFinalProducto, columna, fila);
+			        	gc.drawString(totalFinalProducto.toString(), columna, fila);
 			        	
 			        	fila += 10;
 		        	}
@@ -657,18 +656,18 @@ public class Utils {
 		        	fila = 393;
 		        	columna = 810;
 		        	
-		        	gc.drawString(""+Utils.doubleToInt(factura.getValorNeto()), columna, fila);
+		        	gc.drawString(factura.getValorNeto().toString(), columna, fila);
 		        	
 		        	fila += 12;
-		        	gc.drawString(""+Utils.doubleToInt(factura.getValorIva()), columna, fila);
+		        	gc.drawString(factura.getValorIva().toString(), columna, fila);
 		        	
 		        	fila += 12;
-		        	gc.drawString(""+Utils.doubleToInt(factura.getValorTotal()), columna, fila);
+		        	gc.drawString(factura.getValorTotal().toString(), columna, fila);
 
 		        	//DEBUG
-		        	System.out.println("neto: "+Utils.doubleToInt(factura.getValorNeto()));
-		        	System.out.println("iva: "+Utils.doubleToInt(factura.getValorIva()));
-		        	System.out.println("total: "+Utils.doubleToInt(factura.getValorTotal()));
+		        	System.out.println("neto: "+factura.getValorNeto().toString());
+		        	System.out.println("iva: "+factura.getValorIva().toString());
+		        	System.out.println("total: "+factura.getValorTotal().toString());
 
 		          // Finishes the page. 
 		          printer.endPage();
@@ -755,9 +754,9 @@ public class Utils {
 		        		listaGuias = new ArrayList<VOGuia>();
 			        	listaGuias = daoGuias.getAllGuiasByFacturaProducto(factura.getId(),listaProductos.get(x).getId());
 			        	
-			        	int cantidadProducto = 0;
+			        	BigDecimal cantidadProducto = new BigDecimal(0);
 			        	int valorProducto = 0;
-			        	int totalFinalProducto = 0;
+			        	BigDecimal totalFinalProducto = new BigDecimal(0);
 			        	
 			        	Iterator<VOGuia> guiasIt = listaGuias.iterator();
 			        	while(guiasIt.hasNext()) {
@@ -765,14 +764,14 @@ public class Utils {
 			        		itemProducto = daoGuias.getItemProductoByProductoYGuia(listaProductos.get(x).getId(), guia.getId());
 			        		
 			        		valorProducto = itemProducto.getPrecio();
-			        		cantidadProducto += itemProducto.getCantidad();
-			        		totalFinalProducto += itemProducto.getTotal();
+			        		cantidadProducto = itemProducto.getCantidad();
+			        		totalFinalProducto = itemProducto.getTotal();
 			        	}
 			        	
 			        	//Imprimir cantidad, detalle nombre y total vendido del producto x de todas las guias en cuestion (segun factura)
 			        	
 			        	columna = 10;
-		        		gc.drawString(""+cantidadProducto, columna, fila);
+		        		gc.drawString(cantidadProducto.toString(), columna, fila);
 		        		
 		        		columna = 110;
 		        		gc.drawString(""+listaProductos.get(x).getDescripcion().toUpperCase(), columna, fila);
@@ -781,7 +780,7 @@ public class Utils {
 		        		gc.drawString(""+valorProducto, columna, fila);
 		        		
 			        	columna = 810;
-			        	gc.drawString(""+totalFinalProducto, columna, fila);
+			        	gc.drawString(totalFinalProducto.toString(), columna, fila);
 			        	
 			        	fila += 10;
 		        	}
@@ -813,13 +812,13 @@ public class Utils {
 		        	fila = 393;
 		        	columna = 810;
 		        	
-		        	gc.drawString(""+Utils.doubleToInt(factura.getValorNeto()), columna, fila);
+		        	gc.drawString(factura.getValorNeto().toString(), columna, fila);
 		        	
 		        	fila += 12;
-		        	gc.drawString(""+Utils.doubleToInt(factura.getValorIva()), columna, fila);
+		        	gc.drawString(factura.getValorIva().toString(), columna, fila);
 		        	
 		        	fila += 12;
-		        	gc.drawString(""+Utils.doubleToInt(factura.getValorTotal()), columna, fila);
+		        	gc.drawString(factura.getValorTotal().toString(), columna, fila);
 		        	
 		          // Finishes the page. 
 		          printer.endPage();

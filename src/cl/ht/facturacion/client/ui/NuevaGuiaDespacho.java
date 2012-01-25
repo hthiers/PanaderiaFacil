@@ -34,7 +34,6 @@ import cl.ht.facturacion.client.util.Utils;
 import cl.ht.facturacion.client.vo.VOCliente;
 import cl.ht.facturacion.client.vo.VOGuia;
 import cl.ht.facturacion.client.vo.VOItemProducto;
-import cl.ht.facturacion.client.vo.VOItemProductoX;
 import cl.ht.facturacion.client.vo.VOProducto;
 import cl.ht.facturacion.dao.impl.DAOClientesImpl;
 import cl.ht.facturacion.dao.impl.DAOGuiasImpl;
@@ -75,11 +74,13 @@ public class NuevaGuiaDespacho {
 	
 	//ArrayList<VOItemProducto> listaItems;
 	//TEST BIGDECIMAL
-	ArrayList<VOItemProductoX> listaItems;
+	ArrayList<VOItemProducto> listaItems;
 	
 	int numeroGuia = 1000;
-	int valorTotalFinal = 0;
-	BigDecimal valorTotalFinalBd = new BigDecimal(0);//test
+	
+	//int valorTotalFinal = 0;
+	//TEST BIGDECIMAL
+	BigDecimal valorTotalFinal = new BigDecimal(0);
 	
 	String dia;
 	String mes;
@@ -387,9 +388,11 @@ public class NuevaGuiaDespacho {
 						/*
 						 * Check items
 						 */
-						if(Integer.parseInt(totalFinal.getText()) > 0) {
 						
-							System.out.println("Cliente ya existe");
+						
+						if(!new BigDecimal(totalFinal.getText()).equals(0)) {
+						
+							System.out.println("Cliente ya existe y el total es mayor a 0");
 						
 							cliente = daoClientes.getClienteByRut(rut.getText());
 						
@@ -422,17 +425,18 @@ public class NuevaGuiaDespacho {
 								 */
 								DAOGuiasImpl daoGuias = new DAOGuiasImpl();
 								
-								System.out.println("fecha en campo: "+txtfechaguia.getText());
 								
-								daoGuias.newGuia(Integer.parseInt(txtnumeroguia.getText()), cliente, Utils.getFixedDate(txtfechaguia.getText()), Integer.parseInt(totalFinal.getText()));
+								System.out.println("fecha en campo: "+txtfechaguia.getText());
+								System.out.println("total guia sin decimal: "+totalFinal.getText().substring(0, totalFinal.getText().indexOf(".")));
+								
+								daoGuias.newGuia(Integer.parseInt(txtnumeroguia.getText()), cliente, Utils.getFixedDate(txtfechaguia.getText()), new BigDecimal(totalFinal.getText()).setScale(0,BigDecimal.ROUND_HALF_UP).toBigInteger().intValue());
 								VOGuia guia = daoGuias.getGuiaByNumero(Integer.parseInt(txtnumeroguia.getText()), false);
 								
 								/*
 								 * items de productos
 								 */
 								DAOProductosImpl daoProductos = new DAOProductosImpl();
-								VOItemProducto itemProducto;
-								VOItemProductoX itemProductox = null;
+								VOItemProducto itemProducto = null;
 								
 								VOProducto producto;
 								
@@ -440,33 +444,30 @@ public class NuevaGuiaDespacho {
 								if(!codigo.getText().isEmpty()){
 									System.out.println("Hay 1 producto");
 									producto = daoProductos.getProductoByCodigo(codigo.getText());
-									//itemProducto = new VOItemProducto(producto,guia,Integer.parseInt(cantidad.getText()),Integer.parseInt(precioUnit.getText()),Integer.parseInt(total.getText()));
-									itemProductox = new VOItemProductoX(producto,guia,Integer.parseInt(cantidad.getText()),Integer.parseInt(precioUnit.getText()),Integer.parseInt(total.getText()),new BigDecimal(cantidad.getText()));
-									daoGuias.newItemProducto(itemProductox);
+									itemProducto = new VOItemProducto(producto,guia,Integer.parseInt(precioUnit.getText()),new BigDecimal(total.getText()),new BigDecimal(cantidad.getText()));
+									daoGuias.newItemProducto(itemProducto);
 								}
 								if(!codigo2.getText().isEmpty()) {
 									System.out.println("Hay 2 productos");
 									producto = daoProductos.getProductoByCodigo(codigo2.getText());
-									itemProducto = new VOItemProducto(producto,guia,Integer.parseInt(cantidad2.getText()),Integer.parseInt(precioUnit2.getText()),Integer.parseInt(total2.getText()));
-									//daoGuias.newItemProducto(itemProducto);
+									itemProducto = new VOItemProducto(producto,guia,Integer.parseInt(precioUnit2.getText()),new BigDecimal(total2.getText()),new BigDecimal(cantidad2.getText()));
+									daoGuias.newItemProducto(itemProducto);
 								}
 								if(!codigo3.getText().isEmpty()) {
 									System.out.println("Hay 3 productos");
 									producto = daoProductos.getProductoByCodigo(codigo3.getText());
-									itemProducto = new VOItemProducto(producto,guia,Integer.parseInt(cantidad3.getText()),Integer.parseInt(precioUnit3.getText()),Integer.parseInt(total3.getText()));
-									//daoGuias.newItemProducto(itemProducto);
+									itemProducto = new VOItemProducto(producto,guia,Integer.parseInt(precioUnit3.getText()),new BigDecimal(total3.getText()),new BigDecimal(cantidad3.getText()));
+									daoGuias.newItemProducto(itemProducto);
 								}
 								
 								//*********** DEBUG ************
-								System.out.println(itemProductox.getCantidadx().toString());
+								//System.out.println(itemProducto.getCantidad().toString());
 								
 								
 								//get all items
 								listaItems = daoGuias.getAllItemProductoByGuia(guia);
 								
 								//Muestra mensaje de resultado
-								
-								
 								if(!listaItems.isEmpty()) {
 									style = SWT.ICON_INFORMATION | SWT.OK;
 									dialog = new MessageBox(shell, style);
@@ -536,7 +537,7 @@ public class NuevaGuiaDespacho {
 				 */
 				if(daoClientes.getClienteByRut(rut.getText()) != null)
 					exCliente = true;
-				if(Integer.parseInt(totalFinal.getText()) > 0)
+				if(!new BigDecimal(totalFinal.getText()).equals(0))
 					exItem = true;
 					
 				//check cliente
@@ -595,7 +596,7 @@ public class NuevaGuiaDespacho {
 						/*
 						 * guia de despacho
 						 */
-						daoGuias.newGuia(Integer.parseInt(txtnumeroguia.getText()), cliente, Utils.getFixedDate(txtfechaguia.getText()), Integer.parseInt(totalFinal.getText()));
+						daoGuias.newGuia(Integer.parseInt(txtnumeroguia.getText()), cliente, Utils.getFixedDate(txtfechaguia.getText()), new BigDecimal(totalFinal.getText()).setScale(0,BigDecimal.ROUND_HALF_UP).toBigInteger().intValue());
 						VOGuia guia = daoGuias.getGuiaByNumero(Integer.parseInt(txtnumeroguia.getText()),false);
 						
 						/*
@@ -616,7 +617,7 @@ public class NuevaGuiaDespacho {
 							 * items de productos
 							 */
 							DAOProductosImpl daoProductos = new DAOProductosImpl();
-							VOItemProductoX itemProductox;
+							VOItemProducto itemProducto;
 							
 							VOProducto producto;
 							
@@ -624,25 +625,25 @@ public class NuevaGuiaDespacho {
 							if(!codigo.getText().isEmpty()){
 								System.out.println("Hay 1 producto");
 								producto = daoProductos.getProductoByCodigo(codigo.getText());
-								//itemProducto = new VOItemProducto(producto,guia,Integer.parseInt(cantidad.getText()),Integer.parseInt(precioUnit.getText()),Integer.parseInt(total.getText()));
-								itemProductox = new VOItemProductoX(producto,guia,Integer.parseInt(cantidad.getText()),Integer.parseInt(precioUnit.getText()),Integer.parseInt(total.getText()),new BigDecimal(cantidad.getText()));
-								daoGuias.newItemProducto(itemProductox);
+								itemProducto = new VOItemProducto(producto,guia,Integer.parseInt(precioUnit.getText()),new BigDecimal(total.getText()),new BigDecimal(cantidad.getText()));
+								daoGuias.newItemProducto(itemProducto);
 							}
 							if(!codigo2.getText().isEmpty()) {
 								System.out.println("Hay 2 productos");
 								producto = daoProductos.getProductoByCodigo(codigo2.getText());
-								//itemProducto = new VOItemProducto(producto,guia,Integer.parseInt(cantidad2.getText()),Integer.parseInt(precioUnit2.getText()),Integer.parseInt(total2.getText()));
-								//daoGuias.newItemProducto(itemProducto);
+								itemProducto = new VOItemProducto(producto,guia,Integer.parseInt(precioUnit2.getText()),new BigDecimal(total2.getText()),new BigDecimal(cantidad2.getText()));
+								daoGuias.newItemProducto(itemProducto);
 							}
 							if(!codigo3.getText().isEmpty()) {
 								System.out.println("Hay 3 productos");
 								producto = daoProductos.getProductoByCodigo(codigo3.getText());
-								//itemProducto = new VOItemProducto(producto,guia,Integer.parseInt(cantidad3.getText()),Integer.parseInt(precioUnit3.getText()),Integer.parseInt(total3.getText()));
-								//daoGuias.newItemProducto(itemProducto);
+								itemProducto = new VOItemProducto(producto,guia,Integer.parseInt(precioUnit3.getText()),new BigDecimal(total3.getText()),new BigDecimal(cantidad3.getText()));
+								daoGuias.newItemProducto(itemProducto);
 							}
 							
 							//get all items
 							listaItems = daoGuias.getAllItemProductoByGuia(guia);
+							System.out.println("LGE numero de guias a imprimir: "+listaItems.size());
 							
 							if(!listaItems.isEmpty()) {
 								style = SWT.ICON_QUESTION | SWT.YES | SWT.NO;
@@ -675,7 +676,7 @@ public class NuevaGuiaDespacho {
 							shell.close();
 						}
 						
-					}//verificar guia
+					}//end verificar guia
 					
 				}//end guia existent fields check
 				
@@ -1183,8 +1184,12 @@ public class NuevaGuiaDespacho {
 						else
 							precioUnit.setText(""+ultimoPrecio);
 						
-						valorTotalFinal = Integer.parseInt(total.getText()) + Integer.parseInt(total2.getText()) + Integer.parseInt(total3.getText());
-						totalFinal.setText(""+valorTotalFinal);
+						//valorTotalFinal = Integer.parseInt(total.getText()) + Integer.parseInt(total2.getText()) + Integer.parseInt(total3.getText());
+						valorTotalFinal = new BigDecimal(total.getText());
+						valorTotalFinal.add(new BigDecimal(total2.getText()));
+						valorTotalFinal.add(new BigDecimal(total3.getText()));
+						
+						totalFinal.setText(valorTotalFinal.toString());
 					}
 					else {
 						detalle.setText("PRODUCTO NO ENCONTRADO");
@@ -1241,27 +1246,30 @@ public class NuevaGuiaDespacho {
 			public void focusLost(org.eclipse.swt.events.FocusEvent e) {
 				// TODO Auto-generated method stub
 				if(!cantidad.getText().isEmpty() || !cantidad.getText().equals("")){
-					int valorTotal = 0;
-					BigDecimal valorTotalBd = new BigDecimal(precioUnit.getText()); //test
+					BigDecimal valorTotal = new BigDecimal(precioUnit.getText()); //test
 					
 					if(!precioUnit.getText().isEmpty() || !precioUnit.getText().equals("")){
 						//valorTotal = Integer.parseInt(precioUnit.getText()) * Integer.parseInt(cantidad.getText());
 						
 						//TEST BIGDECIMAL
 						//Calc total con Bigdecimal
-						valorTotalBd = valorTotalBd.multiply(new BigDecimal(cantidad.getText()));
+						valorTotal = valorTotal.multiply(new BigDecimal(cantidad.getText()));
 					}
 					
 					//testing bigdecimal
-					total.setText(""+valorTotalBd.toEngineeringString());
+					total.setText(valorTotal.toString());
 					System.out.println("cantidad = "+cantidad.getText());
-					System.out.println("total.toEngineeringString = "+valorTotalBd.toEngineeringString());
-					System.out.println("total.toString = "+valorTotalBd.toString());
-					System.out.println("total.toPlainString = "+valorTotalBd.toPlainString());
+					System.out.println("total.toString = "+valorTotal.toString());
 					
 					// AQUI
 					//valorTotalFinal = Integer.parseInt(total.getText()) + Integer.parseInt(total2.getText()) + Integer.parseInt(total3.getText());
 					//totalFinal.setText(""+valorTotalFinal);
+					
+					valorTotalFinal = new BigDecimal(total.getText());
+					valorTotalFinal.add(new BigDecimal(total2.getText()));
+					valorTotalFinal.add(new BigDecimal(total3.getText()));
+					
+					totalFinal.setText(valorTotalFinal.toString());
 				}
 			}
 			
@@ -1294,12 +1302,22 @@ public class NuevaGuiaDespacho {
 			public void focusLost(org.eclipse.swt.events.FocusEvent e) {
 				// TODO Auto-generated method stub
 				if(!precioUnit.getText().isEmpty() || !precioUnit.getText().equals("")){
-					int valorTotal = Integer.parseInt(precioUnit.getText()) * Integer.parseInt(cantidad.getText());
-					total.setText(""+valorTotal);
-					System.out.println("total = "+valorTotal);
+					//int valorTotal = Integer.parseInt(precioUnit.getText()) * Integer.parseInt(cantidad.getText());
+					//total.setText(""+valorTotal);
+					BigDecimal valorTotal = new BigDecimal(precioUnit.getText());
+					valorTotal = valorTotal.multiply(new BigDecimal(cantidad.getText()));
 					
-					valorTotalFinal = Integer.parseInt(total.getText()) + Integer.parseInt(total2.getText()) + Integer.parseInt(total3.getText());
-					totalFinal.setText(""+valorTotalFinal);
+					System.out.println("total = "+valorTotal.toString());
+					total.setText(valorTotal.toString());
+					
+					//valorTotalFinal = Integer.parseInt(total.getText()) + Integer.parseInt(total2.getText()) + Integer.parseInt(total3.getText());
+					//totalFinal.setText(""+valorTotalFinal);
+					
+					valorTotalFinal = new BigDecimal(total.getText());
+					valorTotalFinal.add(new BigDecimal(total2.getText()));
+					valorTotalFinal.add(new BigDecimal(total3.getText()));
+					
+					totalFinal.setText(valorTotalFinal.toString());
 				}
 			}
 
@@ -1348,8 +1366,14 @@ public class NuevaGuiaDespacho {
 						
 						System.out.println("producto: "+producto.getNombre());
 						
-						valorTotalFinal = Integer.parseInt(total.getText()) + Integer.parseInt(total2.getText()) + Integer.parseInt(total3.getText());
-						totalFinal.setText(""+valorTotalFinal);
+						//valorTotalFinal = Integer.parseInt(total.getText()) + Integer.parseInt(total2.getText()) + Integer.parseInt(total3.getText());
+						//totalFinal.setText(""+valorTotalFinal);
+						
+						valorTotalFinal = new BigDecimal(total.getText());
+						valorTotalFinal.add(new BigDecimal(total2.getText()));
+						valorTotalFinal.add(new BigDecimal(total3.getText()));
+						
+						totalFinal.setText(valorTotalFinal.toString());
 					}
 					else
 						detalle2.setText("PRODUCTO NO ENCONTRADO");
@@ -1392,14 +1416,27 @@ public class NuevaGuiaDespacho {
 			public void focusLost(org.eclipse.swt.events.FocusEvent e) {
 				// TODO Auto-generated method stub
 				if(!cantidad2.getText().isEmpty() || !cantidad2.getText().equals("")){
-					int valorTotal = 0;
-					if(!precioUnit2.getText().isEmpty())
-						valorTotal = Integer.parseInt(precioUnit2.getText()) * Integer.parseInt(cantidad2.getText());
-					total2.setText(""+valorTotal);
-					System.out.println("total = "+valorTotal);
 					
-					valorTotalFinal = Integer.parseInt(total.getText()) + Integer.parseInt(total2.getText()) + Integer.parseInt(total3.getText());
-					totalFinal.setText(""+valorTotalFinal);
+					BigDecimal valorTotal = new BigDecimal(precioUnit2.getText());
+					
+					if(!precioUnit2.getText().isEmpty())
+						valorTotal.multiply(new BigDecimal(cantidad2.getText()));
+					
+					
+					//if(!precioUnit2.getText().isEmpty())
+					//	valorTotal = Integer.parseInt(precioUnit2.getText()) * Integer.parseInt(cantidad2.getText());
+					
+					total2.setText(valorTotal.toString());
+					System.out.println("total = "+valorTotal.toString());
+					
+					//valorTotalFinal = Integer.parseInt(total.getText()) + Integer.parseInt(total2.getText()) + Integer.parseInt(total3.getText());
+					//totalFinal.setText(""+valorTotalFinal);
+					
+					valorTotalFinal = new BigDecimal(total.getText());
+					valorTotalFinal.add(new BigDecimal(total2.getText()));
+					valorTotalFinal.add(new BigDecimal(total3.getText()));
+					
+					totalFinal.setText(valorTotalFinal.toString());
 				}
 			}
 			
@@ -1432,12 +1469,25 @@ public class NuevaGuiaDespacho {
 			public void focusLost(org.eclipse.swt.events.FocusEvent e) {
 				// TODO Auto-generated method stub
 				if(!precioUnit2.getText().isEmpty() || !precioUnit2.getText().equals("")){
-					int valorTotal = Integer.parseInt(precioUnit2.getText()) * Integer.parseInt(cantidad2.getText());
-					total2.setText(""+valorTotal);
-					System.out.println("total = "+valorTotal);
 					
-					valorTotalFinal = Integer.parseInt(total.getText()) + Integer.parseInt(total2.getText()) + Integer.parseInt(total3.getText());
-					totalFinal.setText(""+valorTotalFinal);
+					
+					BigDecimal valorTotal = new BigDecimal(precioUnit2.getText());
+					
+					if(!precioUnit2.getText().isEmpty())
+						valorTotal.multiply(new BigDecimal(cantidad2.getText()));
+					
+					//int valorTotal = Integer.parseInt(precioUnit2.getText()) * Integer.parseInt(cantidad2.getText());
+					//total2.setText(""+valorTotal);
+					//System.out.println("total = "+valorTotal);
+					
+					//valorTotalFinal = Integer.parseInt(total.getText()) + Integer.parseInt(total2.getText()) + Integer.parseInt(total3.getText());
+					//totalFinal.setText(""+valorTotalFinal);
+					
+					valorTotalFinal = new BigDecimal(total.getText());
+					valorTotalFinal.add(new BigDecimal(total2.getText()));
+					valorTotalFinal.add(new BigDecimal(total3.getText()));
+					
+					totalFinal.setText(valorTotalFinal.toString());
 				}
 			}
 
@@ -1478,7 +1528,7 @@ public class NuevaGuiaDespacho {
 							detalle3.setText(producto.getDescripcion());
 							
 							int ultimoPrecio = getLastPrecio(rut.getText(), producto.getId());
-							if(ultimoPrecio == 0) {
+							if(ultimoPrecio < 1) {
 								precioUnit3.setText(""+producto.getPrecio());
 								System.out.println("no se encontro un ultimo precio");
 							}
@@ -1487,8 +1537,14 @@ public class NuevaGuiaDespacho {
 							
 							System.out.println("producto: "+producto.getNombre());
 							
-							valorTotalFinal = Integer.parseInt(total.getText()) + Integer.parseInt(total2.getText()) + Integer.parseInt(total3.getText());
-							totalFinal.setText(""+valorTotalFinal);
+							//valorTotalFinal = Integer.parseInt(total.getText()) + Integer.parseInt(total2.getText()) + Integer.parseInt(total3.getText());
+							//totalFinal.setText(""+valorTotalFinal);
+							
+							valorTotalFinal = new BigDecimal(total.getText());
+							valorTotalFinal.add(new BigDecimal(total2.getText()));
+							valorTotalFinal.add(new BigDecimal(total3.getText()));
+							
+							totalFinal.setText(valorTotalFinal.toString());
 						}
 					}
 					else
@@ -1531,14 +1587,27 @@ public class NuevaGuiaDespacho {
 			public void focusLost(org.eclipse.swt.events.FocusEvent e) {
 				// TODO Auto-generated method stub
 				if(!cantidad3.getText().isEmpty() || !cantidad3.getText().equals("")){
-					int valorTotal = 0;
-					if(!precioUnit3.getText().isEmpty())
-						valorTotal = Integer.parseInt(precioUnit3.getText()) * Integer.parseInt(cantidad3.getText());
-					total3.setText(""+valorTotal);
-					System.out.println("total = "+valorTotal);
 					
-					valorTotalFinal = Integer.parseInt(total.getText()) + Integer.parseInt(total2.getText()) + Integer.parseInt(total3.getText());
-					totalFinal.setText(""+valorTotalFinal);
+					BigDecimal valorTotal = new BigDecimal(precioUnit3.getText());
+					
+					if(!precioUnit3.getText().isEmpty())
+						valorTotal.multiply(new BigDecimal(cantidad3.getText()));					
+					
+					//int valorTotal = 0;
+					//if(!precioUnit3.getText().isEmpty())
+					//	valorTotal = Integer.parseInt(precioUnit3.getText()) * Integer.parseInt(cantidad3.getText());
+					
+					total3.setText(valorTotal.toString());
+					System.out.println("total = "+valorTotal.toString());
+					
+					//valorTotalFinal = Integer.parseInt(total.getText()) + Integer.parseInt(total2.getText()) + Integer.parseInt(total3.getText());
+					//totalFinal.setText(""+valorTotalFinal);
+					
+					valorTotalFinal = new BigDecimal(total.getText());
+					valorTotalFinal.add(new BigDecimal(total2.getText()));
+					valorTotalFinal.add(new BigDecimal(total3.getText()));
+					
+					totalFinal.setText(valorTotalFinal.toString());
 				}
 			}
 			
@@ -1575,8 +1644,14 @@ public class NuevaGuiaDespacho {
 					total3.setText(""+valorTotal);
 					System.out.println("total = "+valorTotal);
 					
-					valorTotalFinal = Integer.parseInt(total.getText()) + Integer.parseInt(total2.getText()) + Integer.parseInt(total3.getText());
-					totalFinal.setText(""+valorTotalFinal);
+					//valorTotalFinal = Integer.parseInt(total.getText()) + Integer.parseInt(total2.getText()) + Integer.parseInt(total3.getText());
+					//totalFinal.setText(""+valorTotalFinal);
+					
+					valorTotalFinal = new BigDecimal(total.getText());
+					valorTotalFinal.add(new BigDecimal(total2.getText()));
+					valorTotalFinal.add(new BigDecimal(total3.getText()));
+					
+					totalFinal.setText(valorTotalFinal.toString());
 				}
 			}
 
@@ -1678,10 +1753,10 @@ public class NuevaGuiaDespacho {
 		if(guia != null) {
 			System.out.println("DEBUG guia: "+guia.getNumero()+","+guia.getId());
 			
-			ArrayList<VOItemProductoX> listaItems = new DAOGuiasImpl().getAllItemProductoByGuia(guia);
+			ArrayList<VOItemProducto> listaItems = new DAOGuiasImpl().getAllItemProductoByGuia(guia);
 			
 			for(int x=0; x<listaItems.size(); x++) {
-				VOItemProductoX item = listaItems.get(x);
+				VOItemProducto item = listaItems.get(x);
 				
 				System.out.println("DEBUG item: "+item.getIdprod().getId());
 				System.out.println("DEBUG item precio: "+item.getPrecio());

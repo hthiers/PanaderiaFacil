@@ -1,5 +1,6 @@
 package cl.ht.facturacion.dao.impl;
 
+import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -8,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Iterator;
 
-import cl.ht.facturacion.client.util.Utils;
 import cl.ht.facturacion.client.vo.VOCliente;
 import cl.ht.facturacion.client.vo.VOFactura;
 import cl.ht.facturacion.client.vo.VOGuia;
@@ -27,12 +27,12 @@ public class DAOFacturasImpl implements DAOFacturas {
 		java.sql.Date fechaSQL = new java.sql.Date(fecha.getTimeInMillis());
 		VOGuia guia;
 		
-		double totalGuias = 0;
-		double totalNeto = 0;
-		double IVA = 0.19;
-		double factor = 1.19;
-		double totalIVA = 0;
-		double totalFactura = 0;
+		BigDecimal totalGuias = new BigDecimal(0);
+		BigDecimal totalNeto = new BigDecimal(0);
+		BigDecimal IVA = new BigDecimal(0.19);
+		BigDecimal factor = new BigDecimal(1.19);
+		BigDecimal totalIVA = new BigDecimal(0);
+		BigDecimal totalFactura = new BigDecimal(0);
 
 		try {
 			con = new DBConnection("root","walkirias84");
@@ -52,23 +52,24 @@ public class DAOFacturasImpl implements DAOFacturas {
 			Iterator<VOGuia> iter = listaGuias.iterator();
 			while(iter.hasNext()){
 				guia = iter.next();
-				totalGuias += guia.getTotal();
-				System.out.println("DAOFAC precio guia: "+guia.getTotal());
-				System.out.println("DAOFAC total guias en: "+totalGuias+", guia: "+guia.getNumero());
+				totalGuias.add(guia.getTotal());
+				
+				System.out.println("DAOFAC precio guia: "+guia.getTotal().toString());
+				System.out.println("DAOFAC total guias en: "+totalGuias.toString()+", guia: "+guia.getNumero());
 			}
 			
 			//DEBUG
-			System.out.println("DAOFAC total guias final: "+totalGuias);
+			System.out.println("DAOFAC total guias final: "+totalGuias.toString());
 			
 			/*
 			 * Total Guias Neto
 			 */
-			totalNeto = totalGuias / factor;
+			totalNeto = totalGuias.divide(factor);
 			
 			/*
 			 * Total IVA
 			 */
-			totalIVA = totalNeto * IVA;
+			totalIVA = totalNeto.multiply(IVA);
 			
 			/*
 			 * Total Factura
@@ -84,9 +85,9 @@ public class DAOFacturasImpl implements DAOFacturas {
 			pstm.setInt(1, numerofactura);
 			pstm.setString(2, cliente.getId());
 			pstm.setDate(3, fechaSQL);
-			pstm.setDouble(4, Utils.redondeaDecimal(totalNeto));
-			pstm.setDouble(5, Utils.redondeaDecimal(totalIVA));
-			pstm.setDouble(6, Utils.redondeaDecimal(totalFactura));
+			pstm.setBigDecimal(4, totalNeto);
+			pstm.setBigDecimal(5, totalIVA);
+			pstm.setBigDecimal(6, totalFactura);
 			
 			int result = pstm.executeUpdate();
 			System.out.println("result: "+result);
@@ -169,11 +170,11 @@ public class DAOFacturasImpl implements DAOFacturas {
 				factura.setIdCliente(res.getInt(3));
 				cal.setTime(res.getDate(4));
 				factura.setFecha(cal);
-				factura.setValorNeto(Utils.doubleToInt(res.getDouble(5)));
-				factura.setValorIva(Utils.doubleToInt(res.getDouble(6)));
-				factura.setValorTotal(Utils.doubleToInt(res.getDouble(7)));
+				factura.setValorNeto(res.getBigDecimal(5));
+				factura.setValorIva(res.getBigDecimal(6));
+				factura.setValorTotal(res.getBigDecimal(7));
 				
-				System.out.println("llego: "+res.getDouble(5)+","+res.getDouble(6)+","+res.getDouble(7));
+				System.out.println("llego: "+res.getBigDecimal(5).toString()+","+res.getBigDecimal(6).toString()+","+res.getBigDecimal(7).toString());
 				
 				return factura;
 			}
@@ -220,9 +221,9 @@ public class DAOFacturasImpl implements DAOFacturas {
 				Calendar fecha = Calendar.getInstance();
 				fecha.setTimeInMillis(res.getDate(4).getTime());
 				factura.setFecha(fecha);
-				factura.setValorNeto(res.getInt(5));
-				factura.setValorIva(res.getInt(6));
-				factura.setValorTotal(res.getInt(7));
+				factura.setValorNeto(res.getBigDecimal(5));
+				factura.setValorIva(res.getBigDecimal(6));
+				factura.setValorTotal(res.getBigDecimal(7));
 				
 				listaFacturas.add(factura);
 			}
@@ -277,9 +278,9 @@ public class DAOFacturasImpl implements DAOFacturas {
 				Calendar fecha = Calendar.getInstance();
 				fecha.setTimeInMillis(res.getDate(4).getTime());
 				factura.setFecha(fecha);
-				factura.setValorNeto(res.getInt(5));
-				factura.setValorIva(res.getInt(6));
-				factura.setValorTotal(res.getInt(7));
+				factura.setValorNeto(res.getBigDecimal(5));
+				factura.setValorIva(res.getBigDecimal(6));
+				factura.setValorTotal(res.getBigDecimal(7));
 				
 				listaFacturas.add(factura);
 			}
@@ -335,9 +336,9 @@ public class DAOFacturasImpl implements DAOFacturas {
 				Calendar fecha = Calendar.getInstance();
 				fecha.setTimeInMillis(res.getDate(4).getTime());
 				factura.setFecha(fecha);
-				factura.setValorNeto(res.getInt(5));
-				factura.setValorIva(res.getInt(6));
-				factura.setValorTotal(res.getInt(7));
+				factura.setValorNeto(res.getBigDecimal(5));
+				factura.setValorIva(res.getBigDecimal(6));
+				factura.setValorTotal(res.getBigDecimal(7));
 				
 				listaFacturas.add(factura);
 			}

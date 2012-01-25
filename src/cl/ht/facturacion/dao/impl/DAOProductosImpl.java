@@ -74,9 +74,9 @@ public class DAOProductosImpl implements DAOProductos {
 					" (proid,itmcantidad,itmpreciounit,itmtotal)"+
 					" VALUES (?,?,?,?)");
 			pstm.setInt(1, item.getIdprod().getId());
-			pstm.setInt(2, item.getCantidad());
+			pstm.setBigDecimal(2, item.getCantidad());
 			pstm.setInt(3, item.getPrecio());
-			pstm.setInt(4, item.getTotal());
+			pstm.setBigDecimal(4, item.getTotal());
 			
 			int result = pstm.executeUpdate();
 			System.out.println("result: "+result);

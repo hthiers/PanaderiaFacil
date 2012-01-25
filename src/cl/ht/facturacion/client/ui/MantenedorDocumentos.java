@@ -1,5 +1,6 @@
 package cl.ht.facturacion.client.ui;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Iterator;
@@ -36,7 +37,6 @@ import cl.ht.facturacion.client.vo.VOCliente;
 import cl.ht.facturacion.client.vo.VOFactura;
 import cl.ht.facturacion.client.vo.VOGuia;
 import cl.ht.facturacion.client.vo.VOItemProducto;
-import cl.ht.facturacion.client.vo.VOItemProductoX;
 import cl.ht.facturacion.dao.impl.DAOClientesImpl;
 import cl.ht.facturacion.dao.impl.DAOFacturasImpl;
 import cl.ht.facturacion.dao.impl.DAOGuiasImpl;
@@ -226,7 +226,7 @@ public class MantenedorDocumentos {
 					    	System.out.println("mes fixed: "+mesFixed);
 					    	String fecha = guia.getFecha().get(Calendar.DATE)+"/"+mesFixed+"/"+guia.getFecha().get(Calendar.YEAR);
 					    	int kg = daoGuias.getPesoVentaByGuia(guia);
-							item.setText(new String[] {Integer.toString(guia.getNumero()), fecha, cliente.getNombres(), cliente.getApellidos(),""+kg, ""+Utils.doubleToInt(guia.getTotal())});
+							item.setText(new String[] {Integer.toString(guia.getNumero()), fecha, cliente.getNombres(), cliente.getApellidos(),""+kg, guia.getTotal().toString()});
 							
 							//Check guia nula para destacar
 							if(guia.isNula()) {
@@ -249,7 +249,7 @@ public class MantenedorDocumentos {
 						    	int mesFixed = guia.getFecha().get(Calendar.MONTH) + 1;
 						    	String fecha = guia.getFecha().get(Calendar.DATE)+"/"+mesFixed+"/"+guia.getFecha().get(Calendar.YEAR);
 						    	int kg = daoGuias.getPesoVentaByGuia(guia);
-								item.setText(new String[] {Integer.toString(guia.getNumero()), fecha, cliente.getNombres(), cliente.getApellidos(),""+kg, ""+Utils.doubleToInt(guia.getTotal())});
+								item.setText(new String[] {Integer.toString(guia.getNumero()), fecha, cliente.getNombres(), cliente.getApellidos(),""+kg, guia.getTotal().toString()});
 								
 								//Check guia nula para destacar
 								if(guia.isNula()) {
@@ -289,19 +289,19 @@ public class MantenedorDocumentos {
 				    	VOFactura factura = itFacs.next();
 				    	VOCliente cliente = daoClientes.getClienteByID(factura.getIdCliente());
 				    	ArrayList<VOGuia> guias = daoGuias.getAllGuiasByFactura(factura.getId());
-				    	ArrayList<VOItemProductoX> items = new ArrayList<VOItemProductoX>();
-				    	int kg = 0;
+				    	ArrayList<VOItemProducto> items = new ArrayList<VOItemProducto>();
+				    	BigDecimal kg = new BigDecimal(0);
 				    	
 				    	for(int x=0; x<guias.size(); x++) {
 				    		 items = daoGuias.getAllItemProductoByGuia(guias.get(x));
 				    		 for(int i=0; i<items.size(); i++)
-				    			 kg += items.get(i).getCantidad();
+				    			 kg.add(items.get(i).getCantidad());
 				    	}
 				    	
 				    	TableItem item = new TableItem (table, SWT.NONE);
 				    	int mesFixed = factura.getFecha().get(Calendar.MONTH) + 1;
 				    	String fecha = factura.getFecha().get(Calendar.DATE)+"/"+mesFixed+"/"+factura.getFecha().get(Calendar.YEAR);
-				    	item.setText(new String[] {Integer.toString(factura.getNumero()), fecha, cliente.getNombres(), cliente.getApellidos(),""+kg,""+Utils.doubleToInt(factura.getValorNeto()), ""+Utils.doubleToInt(factura.getValorIva()), ""+Utils.doubleToInt(factura.getValorTotal())});
+				    	item.setText(new String[] {Integer.toString(factura.getNumero()), fecha, cliente.getNombres(), cliente.getApellidos(),""+kg.toString(),factura.getValorNeto().toString(), factura.getValorIva().toString(), factura.getValorTotal().toString()});
 				    }
 				}
 					
@@ -438,7 +438,7 @@ public class MantenedorDocumentos {
 					if(!(table.getSelectionIndex() == -1)) {
 						VOGuia guia = daoGuias.getGuiaByNumero(Integer.parseInt(table.getItem(table.getSelectionIndex()).getText()),true);
 						VOCliente cliente = daoClientes.getClienteByID(guia.getIdcliente());
-						ArrayList<VOItemProductoX> listaItemsProd = daoGuias.getAllItemProductoByGuia(guia);
+						ArrayList<VOItemProducto> listaItemsProd = daoGuias.getAllItemProductoByGuia(guia);
 						String fecha = guia.getFecha().get(Calendar.DATE)+"/"+guia.getFecha().get(Calendar.MONTH)+"/"+guia.getFecha().get(Calendar.YEAR);
 						
 						MessageBox dialog = new MessageBox(shell, SWT.ICON_QUESTION | SWT.YES | SWT.NO);
@@ -507,7 +507,7 @@ public class MantenedorDocumentos {
 		            		if(!(table.getSelectionIndex() == -1)) {
 								VOGuia guia = daoGuias.getGuiaByNumero(Integer.parseInt(table.getItem(table.getSelectionIndex()).getText()),true);
 								VOCliente cliente = daoClientes.getClienteByID(guia.getIdcliente());
-								ArrayList<VOItemProductoX> listaItemsProd = daoGuias.getAllItemProductoByGuia(guia);
+								ArrayList<VOItemProducto> listaItemsProd = daoGuias.getAllItemProductoByGuia(guia);
 								String fecha = guia.getFecha().get(Calendar.DATE)+"/"+guia.getFecha().get(Calendar.MONTH)+"/"+guia.getFecha().get(Calendar.YEAR);
 								
 								if(cliente != null) {

@@ -32,7 +32,7 @@ import cl.ht.facturacion.dao.impl.DAOGuiasImpl;
 public class MainClient {
 
 	static Properties props = new Properties();
-	static String version = "0.4.6";
+	static String version = "0.4.7";
 	
 	Button btnGuia;
 	Button btnFactura;

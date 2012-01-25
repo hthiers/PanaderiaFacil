@@ -1,13 +1,15 @@
 package cl.ht.facturacion.client.vo;
 
+import java.math.BigDecimal;
+
 public class VOItemProducto {
 
 	private int id;
 	private VOProducto idprod;
 	private VOGuia idguia;
-	private int cantidad;
 	private int precio;
-	private int total;
+	private BigDecimal total;
+	private BigDecimal cantidad;
 	
 	public VOItemProducto() {
 		super();
@@ -15,7 +17,7 @@ public class VOItemProducto {
 	}
 
 	public VOItemProducto(int id, VOProducto idprod, VOGuia idguia,
-			int cantidad, int precio, int total) {
+			int precio, BigDecimal total, BigDecimal cantidad) {
 		super();
 		this.id = id;
 		this.idprod = idprod;
@@ -26,7 +28,7 @@ public class VOItemProducto {
 	}
 	
 	public VOItemProducto(VOProducto idprod, VOGuia idguia,
-			int cantidad, int precio, int total) {
+			int precio, BigDecimal total, BigDecimal cantidad) {
 		super();
 		this.idprod = idprod;
 		this.idguia = idguia;
@@ -59,14 +61,6 @@ public class VOItemProducto {
 		this.idguia = idguia;
 	}
 
-	public int getCantidad() {
-		return cantidad;
-	}
-
-	public void setCantidad(int cantidad) {
-		this.cantidad = cantidad;
-	}
-
 	public int getPrecio() {
 		return precio;
 	}
@@ -75,12 +69,20 @@ public class VOItemProducto {
 		this.precio = precio;
 	}
 
-	public int getTotal() {
-		return total;
+	public BigDecimal getTotal() {
+		return total.setScale(0,BigDecimal.ROUND_HALF_UP);
 	}
 
-	public void setTotal(int total) {
+	public void setTotal(BigDecimal total) {
 		this.total = total;
 	}
-		
+
+	public BigDecimal getCantidad() {
+		return cantidad;
+		//return cantidad.setScale(0,BigDecimal.ROUND_HALF_UP);
+	}
+
+	public void setCantidad(BigDecimal cantidad) {
+		this.cantidad = cantidad;
+	}
 }

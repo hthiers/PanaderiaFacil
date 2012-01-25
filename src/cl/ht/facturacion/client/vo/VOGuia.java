@@ -1,5 +1,6 @@
 package cl.ht.facturacion.client.vo;
 
+import java.math.BigDecimal;
 import java.util.Calendar;
 
 public class VOGuia {
@@ -8,7 +9,7 @@ public class VOGuia {
 	private int numero;
 	private int idcliente;
 	private Calendar fecha; 
-	private double total;
+	private BigDecimal total;
 	private boolean nula;
 	
 	public VOGuia() {
@@ -16,7 +17,7 @@ public class VOGuia {
 		// TODO Auto-generated constructor stub
 	}
 
-	public VOGuia(int id, int numero, int idcliente, Calendar fecha, double total, boolean nula) {
+	public VOGuia(int id, int numero, int idcliente, Calendar fecha, BigDecimal total, boolean nula) {
 		super();
 		this.id = id;
 		this.numero = numero;
@@ -66,11 +67,11 @@ public class VOGuia {
 		this.fecha = fecha;
 	}
 
-	public double getTotal() {
-		return total;
+	public BigDecimal getTotal() {
+		return total.setScale(0,BigDecimal.ROUND_HALF_UP);
 	}
 
-	public void setTotal(double total) {
+	public void setTotal(BigDecimal total) {
 		this.total = total;
 	}
 	

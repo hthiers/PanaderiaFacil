@@ -1,6 +1,5 @@
 package cl.ht.facturacion.dao.impl;
 
-import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -13,7 +12,6 @@ import cl.ht.facturacion.client.vo.VOCliente;
 import cl.ht.facturacion.client.vo.VOFactura;
 import cl.ht.facturacion.client.vo.VOGuia;
 import cl.ht.facturacion.client.vo.VOItemProducto;
-import cl.ht.facturacion.client.vo.VOItemProductoX;
 import cl.ht.facturacion.client.vo.VOProducto;
 import cl.ht.facturacion.dao.DAOGuias;
 import cl.ht.facturacion.dao.connection.DBConnection;
@@ -96,7 +94,7 @@ public class DAOGuiasImpl implements DAOGuias {
 	}
 
 	@Override
-	public void newItemProducto(VOItemProductoX item) {
+	public void newItemProducto(VOItemProducto item) {
 		// TODO Auto-generated method stub		
 		
 		System.out.println("Item ID y GuiaID: "+item.getId() +","+ item.getIdguia().getId());
@@ -113,9 +111,9 @@ public class DAOGuiasImpl implements DAOGuias {
 			
 			pstm.setInt(1, item.getIdprod().getId());
 			pstm.setInt(2, item.getIdguia().getId());
-			pstm.setInt(3, item.getCantidad());
+			pstm.setBigDecimal(3, item.getCantidad());
 			pstm.setInt(4, item.getPrecio());
-			pstm.setInt(5, item.getTotal());
+			pstm.setBigDecimal(5, item.getTotal());
 			
 			int result = pstm.executeUpdate();
 			System.out.println("result: "+result);
@@ -220,9 +218,6 @@ public class DAOGuiasImpl implements DAOGuias {
 		String sql = null;
 		ResultSet res = null;
 		
-		BigDecimal valorDecimal;
-		int valorEntero;
-		
 		 try {
 			con = new DBConnection("root","walkirias84");
 			stm = con.getConnection().createStatement();
@@ -250,11 +245,12 @@ public class DAOGuiasImpl implements DAOGuias {
 				Calendar cal = Calendar.getInstance();
 				cal.setTime(res.getDate(4));
 				guia.setFecha(cal);
+				guia.setTotal(res.getBigDecimal(5));
 				
 				//Redondear a decimal
-				valorDecimal = new BigDecimal(res.getDouble(5));
-				valorEntero = valorDecimal.setScale(0,BigDecimal.ROUND_HALF_UP).intValue();
-				guia.setTotal(valorEntero);
+				//valorDecimal = new BigDecimal(res.getDouble(5));
+				//valorEntero = valorDecimal.setScale(0,BigDecimal.ROUND_HALF_UP).intValue();
+				//guia.setTotal(valorEntero);
 			
 				guia.setNula(res.getBoolean(7));
 				
@@ -351,9 +347,9 @@ public class DAOGuiasImpl implements DAOGuias {
 				VOItemProducto item = new VOItemProducto();
 				item.setId(res.getInt(1));
 				item.setIdprod(producto);
-				item.setCantidad(res.getInt(3));
+				item.setCantidad(res.getBigDecimal(3));
 				item.setPrecio(res.getInt(4));
-				item.setTotal(res.getInt(5));
+				item.setTotal(res.getBigDecimal(5));
 			
 				return item;
 			}
@@ -407,9 +403,9 @@ public class DAOGuiasImpl implements DAOGuias {
 				
 				item.setId(res.getInt(1));
 				item.setIdprod(daoProductos.getProductoByID(res.getInt(2)));
-				item.setCantidad(res.getInt(4));
+				item.setCantidad(res.getBigDecimal(4));
 				item.setPrecio(res.getInt(5));
-				item.setTotal(res.getInt(6));
+				item.setTotal(res.getBigDecimal(6));
 			}
 			else
 				System.out.println("No se encontro item de producto");
@@ -431,12 +427,12 @@ public class DAOGuiasImpl implements DAOGuias {
 
 	//TEST BIGDECIMAL
 	@Override
-	public ArrayList<VOItemProductoX> getAllItemProductoByGuia(VOGuia guia) {
+	public ArrayList<VOItemProducto> getAllItemProductoByGuia(VOGuia guia) {
 		// TODO Auto-generated method stub
 		
-		ArrayList<VOItemProductoX> listaItems = new ArrayList<VOItemProductoX>();
+		ArrayList<VOItemProducto> listaItems = new ArrayList<VOItemProducto>();
 		DAOProductosImpl daoProductos = new DAOProductosImpl();
-		VOItemProductoX item; //test bigdecimal
+		VOItemProducto item; //test bigdecimal
 		
 		DBConnection con = null;
 		Statement stm = null;
@@ -453,21 +449,21 @@ public class DAOGuiasImpl implements DAOGuias {
 			System.out.println("getItemProductoByProductoID SQL: "+sql);
 			
 			while(res.next()) {
-				item = new VOItemProductoX();
+				item = new VOItemProducto();
 				
 				System.out.println("ITEM PRODUCTO");
 				System.out.println("id: "+res.getInt(1));
 				System.out.println("id producto: "+daoProductos.getProductoByID(res.getInt(2)));
-				System.out.println("cantidad: "+res.getInt(4));
+				System.out.println("cantidad: "+res.getBigDecimal(4).toString());
 				System.out.println("precio: "+res.getInt(5));
-				System.out.println("total: "+res.getInt(6));
+				System.out.println("total: "+res.getBigDecimal(6).toString());
 				
 				
 				item.setId(res.getInt(1));
 				item.setIdprod(daoProductos.getProductoByID(res.getInt(2)));
-				item.setCantidad(res.getInt(4));
+				item.setCantidad(res.getBigDecimal(4));
 				item.setPrecio(res.getInt(5));
-				item.setTotal(res.getInt(6));
+				item.setTotal(res.getBigDecimal(6));
 			
 				listaItems.add(item);
 			}
@@ -532,8 +528,6 @@ public class DAOGuiasImpl implements DAOGuias {
 		
 		VOGuia guia;
 		ArrayList<VOGuia> listaGuias = new ArrayList<VOGuia>();
-		BigDecimal valorDecimal;
-		int valorEntero;
 		
 		java.sql.Date sqlDesde = new java.sql.Date(fechaDesde.getTimeInMillis());
 		java.sql.Date sqlHasta = new java.sql.Date(fechaHasta.getTimeInMillis());
@@ -566,11 +560,12 @@ public class DAOGuiasImpl implements DAOGuias {
 				Calendar fecha = Calendar.getInstance();
 				fecha.setTimeInMillis(res.getDate(4).getTime());
 				guia.setFecha(fecha);
+				guia.setTotal(res.getBigDecimal(5));
 				
 				//Redondear a decimal
-				valorDecimal = new BigDecimal(res.getDouble(5));
-				valorEntero = valorDecimal.setScale(0,BigDecimal.ROUND_HALF_UP).intValue();
-				guia.setTotal(valorEntero);
+				//valorDecimal = new BigDecimal(res.getDouble(5));
+				//valorEntero = valorDecimal.setScale(0,BigDecimal.ROUND_HALF_UP).intValue();
+				//guia.setTotal(valorEntero);
 				
 				guia.setNula(res.getBoolean(7));
 				
@@ -610,8 +605,6 @@ public class DAOGuiasImpl implements DAOGuias {
 		
 		VOGuia guia;
 		ArrayList<VOGuia> listaGuias = new ArrayList<VOGuia>();
-		BigDecimal valorDecimal;
-		int valorEntero;
 		
 		java.sql.Date sqlDesde = new java.sql.Date(fechaDesde.getTimeInMillis());
 		java.sql.Date sqlHasta = new java.sql.Date(fechaHasta.getTimeInMillis());
@@ -635,11 +628,12 @@ public class DAOGuiasImpl implements DAOGuias {
 				Calendar fecha = Calendar.getInstance();
 				fecha.setTimeInMillis(res.getDate(4).getTime());
 				guia.setFecha(fecha);
+				guia.setTotal(res.getBigDecimal(5));
 				
 				//Redondear a decimal
-				valorDecimal = new BigDecimal(res.getDouble(5));
-				valorEntero = valorDecimal.setScale(0,BigDecimal.ROUND_HALF_UP).intValue();
-				guia.setTotal(valorEntero);
+				//valorDecimal = new BigDecimal(res.getDouble(5));
+				//valorEntero = valorDecimal.setScale(0,BigDecimal.ROUND_HALF_UP).intValue();
+				//guia.setTotal(valorEntero);
 				
 				listaGuias.add(guia);
 			}
@@ -669,8 +663,6 @@ public class DAOGuiasImpl implements DAOGuias {
 		
 		VOGuia guia;
 		ArrayList<VOGuia> listaGuias = new ArrayList<VOGuia>();
-		BigDecimal valorDecimal;
-		int valorEntero;
 		
 		 try {
 			con = new DBConnection("root","walkirias84");
@@ -686,11 +678,12 @@ public class DAOGuiasImpl implements DAOGuias {
 				Calendar fecha = Calendar.getInstance();
 				fecha.setTimeInMillis(res.getDate(4).getTime());
 				guia.setFecha(fecha);
+				guia.setTotal(res.getBigDecimal(5));
 				
 				//Redondear a decimal
-				valorDecimal = new BigDecimal(res.getDouble(5));
-				valorEntero = valorDecimal.setScale(0,BigDecimal.ROUND_HALF_UP).intValue();
-				guia.setTotal(valorEntero);
+				//valorDecimal = new BigDecimal(res.getDouble(5));
+				//valorEntero = valorDecimal.setScale(0,BigDecimal.ROUND_HALF_UP).intValue();
+				//guia.setTotal(valorEntero);
 				
 				guia.setNula(res.getBoolean(7));
 				
@@ -755,8 +748,6 @@ public class DAOGuiasImpl implements DAOGuias {
 		
 		VOGuia guia;
 		ArrayList<VOGuia> listaGuias = new ArrayList<VOGuia>();
-		BigDecimal valorDecimal;
-		int valorEntero;
 		
 		 try {
 			con = new DBConnection("root","walkirias84");
@@ -773,11 +764,12 @@ public class DAOGuiasImpl implements DAOGuias {
 				Calendar fecha = Calendar.getInstance();
 				fecha.setTimeInMillis(res.getDate(4).getTime());
 				guia.setFecha(fecha);
+				guia.setTotal(res.getBigDecimal(5));
 				
 				//Redondear a decimal
-				valorDecimal = new BigDecimal(res.getDouble(5));
-				valorEntero = valorDecimal.setScale(0,BigDecimal.ROUND_HALF_UP).intValue();
-				guia.setTotal(valorEntero);
+				//valorDecimal = new BigDecimal(res.getDouble(5));
+				//valorEntero = valorDecimal.setScale(0,BigDecimal.ROUND_HALF_UP).intValue();
+				//guia.setTotal(valorEntero);
 				
 				guia.setNula(res.getBoolean(7));
 				
@@ -811,8 +803,6 @@ public class DAOGuiasImpl implements DAOGuias {
 		
 		VOGuia guia;
 		ArrayList<VOGuia> listaGuias = new ArrayList<VOGuia>();
-		BigDecimal valorDecimal;
-		int valorEntero;
 		
 		try {
 			con = new DBConnection("root","walkirias84");
@@ -832,11 +822,12 @@ public class DAOGuiasImpl implements DAOGuias {
 				Calendar fecha = Calendar.getInstance();
 				fecha.setTimeInMillis(res.getDate(4).getTime());
 				guia.setFecha(fecha);
+				guia.setTotal(res.getBigDecimal(5));
 				
 				//Redondear a decimal
-				valorDecimal = new BigDecimal(res.getDouble(5));
-				valorEntero = valorDecimal.setScale(0,BigDecimal.ROUND_HALF_UP).intValue();
-				guia.setTotal(valorEntero);
+				//valorDecimal = new BigDecimal(res.getDouble(5));
+				//valorEntero = valorDecimal.setScale(0,BigDecimal.ROUND_HALF_UP).intValue();
+				//guia.setTotal(valorEntero);
 				
 				guia.setNula(res.getBoolean(7));
 				
@@ -946,9 +937,9 @@ public class DAOGuiasImpl implements DAOGuias {
 				
 				item.setId(res.getInt(1));
 				item.setIdprod(daoProductos.getProductoByID(res.getInt(2)));
-				item.setCantidad(res.getInt(4));
+				item.setCantidad(res.getBigDecimal(4));
 				item.setPrecio(res.getInt(5));
-				item.setTotal(res.getInt(6));
+				item.setTotal(res.getBigDecimal(6));
 			}
 			else
 				System.out.println("No se encontro item de producto");
@@ -1019,8 +1010,6 @@ public class DAOGuiasImpl implements DAOGuias {
 		
 		VOGuia guia;
 		ArrayList<VOGuia> listaGuias = new ArrayList<VOGuia>();
-		BigDecimal valorDecimal;
-		int valorEntero;
 		
 		java.sql.Date sqlDesde = new java.sql.Date(fechaDesde.getTimeInMillis());
 		java.sql.Date sqlHasta = new java.sql.Date(fechaHasta.getTimeInMillis());
@@ -1057,11 +1046,12 @@ public class DAOGuiasImpl implements DAOGuias {
 				Calendar fecha = Calendar.getInstance();
 				fecha.setTimeInMillis(res.getDate(4).getTime());
 				guia.setFecha(fecha);
+				guia.setTotal(res.getBigDecimal(5));
 				
 				//Redondear a decimal
-				valorDecimal = new BigDecimal(res.getDouble(5));
-				valorEntero = valorDecimal.setScale(0,BigDecimal.ROUND_HALF_UP).intValue();
-				guia.setTotal(valorEntero);
+				//valorDecimal = new BigDecimal(res.getDouble(5));
+				//valorEntero = valorDecimal.setScale(0,BigDecimal.ROUND_HALF_UP).intValue();
+				//guia.setTotal(valorEntero);
 				
 				guia.setNula(res.getBoolean(7));
 				
@@ -1101,8 +1091,6 @@ public class DAOGuiasImpl implements DAOGuias {
 		
 		VOGuia guia;
 		ArrayList<VOGuia> listaGuias = new ArrayList<VOGuia>();
-		BigDecimal valorDecimal;
-		int valorEntero;
 		
 		java.sql.Date sqlDesde = new java.sql.Date(fechaDesde.getTimeInMillis());
 		java.sql.Date sqlHasta = new java.sql.Date(fechaHasta.getTimeInMillis());
@@ -1137,11 +1125,12 @@ public class DAOGuiasImpl implements DAOGuias {
 				Calendar fecha = Calendar.getInstance();
 				fecha.setTimeInMillis(res.getDate(4).getTime());
 				guia.setFecha(fecha);
+				guia.setTotal(res.getBigDecimal(5));
 
 				//Redondear a decimal
-				valorDecimal = new BigDecimal(res.getDouble(5));
-				valorEntero = valorDecimal.setScale(0,BigDecimal.ROUND_HALF_UP).intValue();
-				guia.setTotal(valorEntero);
+				//valorDecimal = new BigDecimal(res.getDouble(5));
+				//valorEntero = valorDecimal.setScale(0,BigDecimal.ROUND_HALF_UP).intValue();
+				//guia.setTotal(valorEntero);
 
 				guia.setNula(res.getBoolean(7));
 				
@@ -1328,11 +1317,12 @@ public class DAOGuiasImpl implements DAOGuias {
 				Calendar fecha = Calendar.getInstance();
 				fecha.setTimeInMillis(res.getDate(4).getTime());
 				guia.setFecha(fecha);
+				guia.setTotal(res.getBigDecimal(5));
 
 				//Redondear a decimal
-				BigDecimal valorDecimal = new BigDecimal(res.getDouble(5));
-				int valorEntero = valorDecimal.setScale(0,BigDecimal.ROUND_HALF_UP).intValue();
-				guia.setTotal(valorEntero);
+				//BigDecimal valorDecimal = new BigDecimal(res.getDouble(5));
+				//int valorEntero = valorDecimal.setScale(0,BigDecimal.ROUND_HALF_UP).intValue();
+				//guia.setTotal(valorEntero);
 				
 				guia.setNula(res.getBoolean(7));
 				
