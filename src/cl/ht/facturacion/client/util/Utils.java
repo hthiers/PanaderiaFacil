@@ -72,7 +72,7 @@ public class Utils {
 		return null;
 	}
 	
-	public static Calendar getDateByMonth(String month) {
+	public static Calendar getDateByMonth(String month, String year) {
 		
 		Calendar fecha = Calendar.getInstance();
 		
@@ -117,10 +117,15 @@ public class Utils {
 		fecha.set(Calendar.DATE, 1);
 		fecha.set(Calendar.MONTH, numericMonth);
 		
+		if(year != null)
+			fecha.set(Calendar.YEAR, Integer.parseInt(year));
+		
+		System.out.println("fecha ini: "+fecha.get(Calendar.DATE)+","+fecha.get(Calendar.MONTH)+","+fecha.get(Calendar.YEAR));
+		
 		return fecha;
 	}
 	
-	public static Calendar getNextDateByMonth(String month) {
+	public static Calendar getNextDateByMonth(String month, String year) {
 		
 		Calendar fecha = Calendar.getInstance();
 		
@@ -164,7 +169,24 @@ public class Utils {
 		
 		fecha.set(Calendar.DATE, 1);
 		numericMonth += 1;
-		fecha.set(Calendar.MONTH, numericMonth);
+		
+		//fecha.set(Calendar.MONTH, numericMonth);
+		//fecha.set(Calendar.YEAR, Integer.parseInt(year));
+		
+		if(numericMonth > 11) {
+			fecha.set(Calendar.MONTH, 0);
+			
+			if(year != null)
+				fecha.set(Calendar.YEAR, Integer.parseInt(year)+1);
+		}
+		else {
+			fecha.set(Calendar.MONTH, numericMonth);
+			
+			if(year != null)
+				fecha.set(Calendar.YEAR, Integer.parseInt(year));
+		}
+		
+		System.out.println("fecha tope: "+fecha.get(Calendar.DATE)+","+fecha.get(Calendar.MONTH)+","+fecha.get(Calendar.YEAR));
 		
 		return fecha;
 	}

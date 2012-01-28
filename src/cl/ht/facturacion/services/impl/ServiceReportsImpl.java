@@ -25,8 +25,8 @@ public class ServiceReportsImpl implements ServiceReports {
 	    BigDecimal totalVentaGuias = new BigDecimal(0);
 	    int totalNumeroGuias = 0;
 
-	    Calendar fechaDesde = Utils.getDateByMonth(mes);
-		Calendar fechaHasta = Utils.getNextDateByMonth(mes);
+	    Calendar fechaDesde = Utils.getDateByMonth(mes,""+Calendar.getInstance().YEAR);
+		Calendar fechaHasta = Utils.getNextDateByMonth(mes,""+Calendar.getInstance().YEAR);
 		System.out.println("@REPORTS desde: "+fechaDesde.get(Calendar.MONTH));
 		System.out.println("@REPORTS hasta: "+fechaHasta.get(Calendar.MONTH));
 		
@@ -60,8 +60,8 @@ public class ServiceReportsImpl implements ServiceReports {
 	    BigDecimal kgsEmitido = new BigDecimal(0);
 	    BigDecimal totalIVA = new BigDecimal(0);
 
-	    Calendar fechaDesde = Utils.getDateByMonth(mes);
-		Calendar fechaHasta = Utils.getNextDateByMonth(mes);
+	    Calendar fechaDesde = Utils.getDateByMonth(mes,""+Calendar.getInstance().YEAR);
+		Calendar fechaHasta = Utils.getNextDateByMonth(mes,""+Calendar.getInstance().YEAR);
 		System.out.println("@REPORTS desde: "+fechaDesde.get(Calendar.MONTH));
 		System.out.println("@REPORTS hasta: "+fechaHasta.get(Calendar.MONTH));
 		

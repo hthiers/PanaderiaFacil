@@ -251,8 +251,8 @@ public class NuevaFactura {
 				// TODO Auto-generated method stub
 				
 				Calendar fechaFactura = Utils.getFixedDate(txtFechaFactura.getText());
-				Calendar fechaDesde = Utils.getDateByMonth(mesFacturacion.getText());
-				Calendar fechaHasta = Utils.getNextDateByMonth(mesFacturacion.getText());
+				Calendar fechaDesde = Utils.getDateByMonth(mesFacturacion.getText(),null);
+				Calendar fechaHasta = Utils.getNextDateByMonth(mesFacturacion.getText(),null);
 				
 				System.out.println("mes entrado: "+mesFacturacion.getText());
 				System.out.println("fecha desde: "+fechaDesde.getTime());
@@ -354,8 +354,8 @@ public class NuevaFactura {
 				// TODO Auto-generated method stub
 				
 				Calendar fechaFactura = Utils.getFixedDate(txtFechaFactura.getText());
-				Calendar fechaDesde = Utils.getDateByMonth(mesFacturacion.getText());
-				Calendar fechaHasta = Utils.getNextDateByMonth(mesFacturacion.getText());
+				Calendar fechaDesde = Utils.getDateByMonth(mesFacturacion.getText(),null);
+				Calendar fechaHasta = Utils.getNextDateByMonth(mesFacturacion.getText(),null);
 				
 				System.out.println("mes entrado: "+mesFacturacion.getText());
 				System.out.println("fecha desde: "+fechaDesde.getTime());

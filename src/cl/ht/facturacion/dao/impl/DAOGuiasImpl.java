@@ -1,5 +1,6 @@
 package cl.ht.facturacion.dao.impl;
 
+import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -1208,10 +1209,11 @@ public class DAOGuiasImpl implements DAOGuias {
 	}
 
 	@Override
-	public int getPesoVentaByGuia(VOGuia guia) {
+	public BigDecimal getPesoVentaByGuia(VOGuia guia) {
 		// TODO Auto-generated method stub
 		
-		int kgVenta = 0;
+		//int kgVenta = 0;
+		BigDecimal kgVenta = new BigDecimal(0);
 		
 		DBConnection con = null;
 		Statement stm = null;
@@ -1225,12 +1227,11 @@ public class DAOGuiasImpl implements DAOGuias {
 			" WHERE guiid = "+guia.getId()+" ";
 			res = stm.executeQuery(sql);
 			
+			System.out.println("@SQL getPesoVentaByGuia: "+sql);
+			
 			while(res.next()) {
-				kgVenta += res.getInt(1);
-			}
-			
-			return kgVenta;
-			
+				kgVenta = kgVenta.add(new BigDecimal(res.getString(1)));
+			}			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -1241,7 +1242,7 @@ public class DAOGuiasImpl implements DAOGuias {
 	        if (con != null) try { con.getConnection().close(); } catch (SQLException logOrIgnore) {}
 	    }
 		
-		return 0;
+		return kgVenta;
 	}
 
 	@Override

@@ -52,6 +52,8 @@ public class MantenedorDocumentos {
 	Text txtBusqueda;
 	Label lblBusqMes;
 	Combo cboBusqueda;
+	Label lblBusqAno;
+	Text txtBusqAno;
 	Button btnBusqueda;
 	Button btnBusqOpcion1;
 	Button btnBusqOpcion2;
@@ -85,11 +87,11 @@ public class MantenedorDocumentos {
 		 */
 		Composite compoBusqueda = new Composite(shell, SWT.NONE);
 		gridLayout = new GridLayout();
-		gridLayout.numColumns = 7;
+		gridLayout.numColumns = 9;
 		compoBusqueda.setLayout(gridLayout);
 		
 		GridData gridData = new GridData();
-		gridData.horizontalSpan = 7;
+		gridData.horizontalSpan = 9;
 		compoBusqueda.setLayoutData(gridData);
 		
 		lblBusqRut = new Label(compoBusqueda, SWT.NONE);
@@ -115,6 +117,15 @@ public class MantenedorDocumentos {
 	    cboBusqueda.select(0);
 	    cboBusqueda.setLayoutData(new GridData(GridData.BEGINNING, GridData.CENTER, false, false));
 
+	    lblBusqAno = new Label(compoBusqueda, SWT.NONE);
+		lblBusqAno.setText("Año");
+		lblBusqAno.setLayoutData(new GridData(GridData.END, GridData.CENTER, false, false));
+	    
+		txtBusqAno = new Text(compoBusqueda, SWT.BORDER);
+		gridData = new GridData(GridData.BEGINNING, GridData.CENTER, false, false);
+		gridData.widthHint = 80;
+		txtBusqAno.setLayoutData(new GridData(GridData.BEGINNING, GridData.CENTER, false, false));
+		
 	    btnBusqueda = new Button(compoBusqueda, SWT.PUSH);
 	    btnBusqueda.setText("Buscar");
 	    btnBusqueda.setImage(new Image(display, "media/Search-icon.png"));
@@ -187,8 +198,8 @@ public class MantenedorDocumentos {
 				// TODO Auto-generated method stub
 				
 				clienteBusqueda = daoClientes.getClienteByRut(txtBusqueda.getText());
-			    fechaDesdeBusqueda = Utils.getDateByMonth(cboBusqueda.getText());
-				fechaHastaBusqueda = Utils.getNextDateByMonth(cboBusqueda.getText());
+			    fechaDesdeBusqueda = Utils.getDateByMonth(cboBusqueda.getText(),txtBusqAno.getText());
+				fechaHastaBusqueda = Utils.getNextDateByMonth(cboBusqueda.getText(),txtBusqAno.getText());
 				
 				if(btnBusqOpcion2.getSelection())
 					tipo = 2;
@@ -196,6 +207,7 @@ public class MantenedorDocumentos {
 					tipo = 1;
 				
 				System.out.println("guia?: "+btnBusqOpcion1.getSelection());
+				//System.out.println("fecha: "+fechaDesdeBusqueda.toString());
 
 				table.removeAll();
 				table.clearAll();
@@ -222,11 +234,13 @@ public class MantenedorDocumentos {
 					    	VOCliente cliente = daoClientes.getClienteByID(guia.getIdcliente());
 					    	TableItem item = new TableItem (table, SWT.NONE);
 					    	int mesFixed = guia.getFecha().get(Calendar.MONTH) + 1;
+					    	
 					    	System.out.println("mes normal: "+guia.getFecha().get(Calendar.MONTH));
 					    	System.out.println("mes fixed: "+mesFixed);
+					    	
 					    	String fecha = guia.getFecha().get(Calendar.DATE)+"/"+mesFixed+"/"+guia.getFecha().get(Calendar.YEAR);
-					    	int kg = daoGuias.getPesoVentaByGuia(guia);
-							item.setText(new String[] {Integer.toString(guia.getNumero()), fecha, cliente.getNombres(), cliente.getApellidos(),""+kg, guia.getTotal().toString()});
+					    	BigDecimal kg = daoGuias.getPesoVentaByGuia(guia);
+							item.setText(new String[] {Integer.toString(guia.getNumero()), fecha, cliente.getNombres(), cliente.getApellidos(),kg.toString(), guia.getTotal().toString()});
 							
 							//Check guia nula para destacar
 							if(guia.isNula()) {
@@ -248,8 +262,8 @@ public class MantenedorDocumentos {
 						    	TableItem item = new TableItem (table, SWT.NONE);
 						    	int mesFixed = guia.getFecha().get(Calendar.MONTH) + 1;
 						    	String fecha = guia.getFecha().get(Calendar.DATE)+"/"+mesFixed+"/"+guia.getFecha().get(Calendar.YEAR);
-						    	int kg = daoGuias.getPesoVentaByGuia(guia);
-								item.setText(new String[] {Integer.toString(guia.getNumero()), fecha, cliente.getNombres(), cliente.getApellidos(),""+kg, guia.getTotal().toString()});
+						    	BigDecimal kg = daoGuias.getPesoVentaByGuia(guia);
+								item.setText(new String[] {Integer.toString(guia.getNumero()), fecha, cliente.getNombres(), cliente.getApellidos(),kg.toString(), guia.getTotal().toString()});
 								
 								//Check guia nula para destacar
 								if(guia.isNula()) {

@@ -1184,10 +1184,14 @@ public class NuevaGuiaDespacho {
 						else
 							precioUnit.setText(""+ultimoPrecio);
 						
-						//valorTotalFinal = Integer.parseInt(total.getText()) + Integer.parseInt(total2.getText()) + Integer.parseInt(total3.getText());
 						valorTotalFinal = new BigDecimal(total.getText());
-						valorTotalFinal.add(new BigDecimal(total2.getText()));
-						valorTotalFinal.add(new BigDecimal(total3.getText()));
+						System.out.println("vtf 1: "+valorTotalFinal.toString());
+						
+						valorTotalFinal = valorTotalFinal.add(new BigDecimal(total2.getText()));
+						System.out.println("vtf 2: "+valorTotalFinal.toString());
+						
+						valorTotalFinal = valorTotalFinal.add(new BigDecimal(total3.getText()));
+						System.out.println("vtf 3: "+valorTotalFinal.toString());
 						
 						totalFinal.setText(valorTotalFinal.toString());
 					}
@@ -1266,8 +1270,8 @@ public class NuevaGuiaDespacho {
 					//totalFinal.setText(""+valorTotalFinal);
 					
 					valorTotalFinal = new BigDecimal(total.getText());
-					valorTotalFinal.add(new BigDecimal(total2.getText()));
-					valorTotalFinal.add(new BigDecimal(total3.getText()));
+					valorTotalFinal = valorTotalFinal.add(new BigDecimal(total2.getText()));
+					valorTotalFinal = valorTotalFinal.add(new BigDecimal(total3.getText()));
 					
 					totalFinal.setText(valorTotalFinal.toString());
 				}
@@ -1314,8 +1318,8 @@ public class NuevaGuiaDespacho {
 					//totalFinal.setText(""+valorTotalFinal);
 					
 					valorTotalFinal = new BigDecimal(total.getText());
-					valorTotalFinal.add(new BigDecimal(total2.getText()));
-					valorTotalFinal.add(new BigDecimal(total3.getText()));
+					valorTotalFinal = valorTotalFinal.add(new BigDecimal(total2.getText()));
+					valorTotalFinal = valorTotalFinal.add(new BigDecimal(total3.getText()));
 					
 					totalFinal.setText(valorTotalFinal.toString());
 				}
@@ -1370,8 +1374,8 @@ public class NuevaGuiaDespacho {
 						//totalFinal.setText(""+valorTotalFinal);
 						
 						valorTotalFinal = new BigDecimal(total.getText());
-						valorTotalFinal.add(new BigDecimal(total2.getText()));
-						valorTotalFinal.add(new BigDecimal(total3.getText()));
+						valorTotalFinal = valorTotalFinal.add(new BigDecimal(total2.getText()));
+						valorTotalFinal = valorTotalFinal.add(new BigDecimal(total3.getText()));
 						
 						totalFinal.setText(valorTotalFinal.toString());
 					}
@@ -1420,7 +1424,7 @@ public class NuevaGuiaDespacho {
 					BigDecimal valorTotal = new BigDecimal(precioUnit2.getText());
 					
 					if(!precioUnit2.getText().isEmpty())
-						valorTotal.multiply(new BigDecimal(cantidad2.getText()));
+						valorTotal = valorTotal.multiply(new BigDecimal(cantidad2.getText()));
 					
 					
 					//if(!precioUnit2.getText().isEmpty())
@@ -1433,8 +1437,8 @@ public class NuevaGuiaDespacho {
 					//totalFinal.setText(""+valorTotalFinal);
 					
 					valorTotalFinal = new BigDecimal(total.getText());
-					valorTotalFinal.add(new BigDecimal(total2.getText()));
-					valorTotalFinal.add(new BigDecimal(total3.getText()));
+					valorTotalFinal = valorTotalFinal.add(new BigDecimal(total2.getText()));
+					valorTotalFinal = valorTotalFinal.add(new BigDecimal(total3.getText()));
 					
 					totalFinal.setText(valorTotalFinal.toString());
 				}
@@ -1474,18 +1478,20 @@ public class NuevaGuiaDespacho {
 					BigDecimal valorTotal = new BigDecimal(precioUnit2.getText());
 					
 					if(!precioUnit2.getText().isEmpty())
-						valorTotal.multiply(new BigDecimal(cantidad2.getText()));
+						valorTotal = valorTotal.multiply(new BigDecimal(cantidad2.getText()));
 					
 					//int valorTotal = Integer.parseInt(precioUnit2.getText()) * Integer.parseInt(cantidad2.getText());
 					//total2.setText(""+valorTotal);
 					//System.out.println("total = "+valorTotal);
 					
+					total2.setText(valorTotal.toString());
+					
 					//valorTotalFinal = Integer.parseInt(total.getText()) + Integer.parseInt(total2.getText()) + Integer.parseInt(total3.getText());
 					//totalFinal.setText(""+valorTotalFinal);
 					
 					valorTotalFinal = new BigDecimal(total.getText());
-					valorTotalFinal.add(new BigDecimal(total2.getText()));
-					valorTotalFinal.add(new BigDecimal(total3.getText()));
+					valorTotalFinal = valorTotalFinal.add(new BigDecimal(total2.getText()));
+					valorTotalFinal = valorTotalFinal.add(new BigDecimal(total3.getText()));
 					
 					totalFinal.setText(valorTotalFinal.toString());
 				}
@@ -1541,8 +1547,8 @@ public class NuevaGuiaDespacho {
 							//totalFinal.setText(""+valorTotalFinal);
 							
 							valorTotalFinal = new BigDecimal(total.getText());
-							valorTotalFinal.add(new BigDecimal(total2.getText()));
-							valorTotalFinal.add(new BigDecimal(total3.getText()));
+							valorTotalFinal = valorTotalFinal.add(new BigDecimal(total2.getText()));
+							valorTotalFinal = valorTotalFinal.add(new BigDecimal(total3.getText()));
 							
 							totalFinal.setText(valorTotalFinal.toString());
 						}
@@ -1591,7 +1597,7 @@ public class NuevaGuiaDespacho {
 					BigDecimal valorTotal = new BigDecimal(precioUnit3.getText());
 					
 					if(!precioUnit3.getText().isEmpty())
-						valorTotal.multiply(new BigDecimal(cantidad3.getText()));					
+						valorTotal = valorTotal.multiply(new BigDecimal(cantidad3.getText()));					
 					
 					//int valorTotal = 0;
 					//if(!precioUnit3.getText().isEmpty())
@@ -1604,8 +1610,8 @@ public class NuevaGuiaDespacho {
 					//totalFinal.setText(""+valorTotalFinal);
 					
 					valorTotalFinal = new BigDecimal(total.getText());
-					valorTotalFinal.add(new BigDecimal(total2.getText()));
-					valorTotalFinal.add(new BigDecimal(total3.getText()));
+					valorTotalFinal = valorTotalFinal.add(new BigDecimal(total2.getText()));
+					valorTotalFinal = valorTotalFinal.add(new BigDecimal(total3.getText()));
 					
 					totalFinal.setText(valorTotalFinal.toString());
 				}
@@ -1640,16 +1646,21 @@ public class NuevaGuiaDespacho {
 			public void focusLost(org.eclipse.swt.events.FocusEvent e) {
 				if(!precioUnit3.getText().isEmpty() || !precioUnit3.getText().equals("")){
 					// TODO Auto-generated method stub
-					int valorTotal = Integer.parseInt(precioUnit3.getText()) * Integer.parseInt(cantidad3.getText());
-					total3.setText(""+valorTotal);
-					System.out.println("total = "+valorTotal);
+					
+					//int valorTotal = Integer.parseInt(precioUnit3.getText()) * Integer.parseInt(cantidad3.getText());
+					//total3.setText(""+valorTotal);
+					//System.out.println("total = "+valorTotal);
+					
+					BigDecimal valorTotal = new BigDecimal(precioUnit3.getText());
+					valorTotal = valorTotal.multiply(new BigDecimal(cantidad3.getText()));
+					total3.setText(valorTotal.toString());
 					
 					//valorTotalFinal = Integer.parseInt(total.getText()) + Integer.parseInt(total2.getText()) + Integer.parseInt(total3.getText());
 					//totalFinal.setText(""+valorTotalFinal);
 					
 					valorTotalFinal = new BigDecimal(total.getText());
-					valorTotalFinal.add(new BigDecimal(total2.getText()));
-					valorTotalFinal.add(new BigDecimal(total3.getText()));
+					valorTotalFinal = valorTotalFinal.add(new BigDecimal(total2.getText()));
+					valorTotalFinal = valorTotalFinal.add(new BigDecimal(total3.getText()));
 					
 					totalFinal.setText(valorTotalFinal.toString());
 				}

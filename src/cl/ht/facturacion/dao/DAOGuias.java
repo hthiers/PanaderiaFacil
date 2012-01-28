@@ -1,5 +1,6 @@
 package cl.ht.facturacion.dao;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -41,7 +42,7 @@ public interface DAOGuias {
 	public int[] getIDProductosInGuiasByFactura(int idFactura);
 	public ArrayList<VOProducto> getAllProductosInGuiasByFactura(int idFactura);
 	
-	public int getPesoVentaByGuia(VOGuia guia);
+	public BigDecimal getPesoVentaByGuia(VOGuia guia);
 	
 	public boolean checkExistenGuia(int numeroGuia);
 	public boolean checkGuiaFacturada(int numeroGuia);
