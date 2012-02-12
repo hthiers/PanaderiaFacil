@@ -1,6 +1,8 @@
 package cl.ht.facturacion.dao.impl;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -52,24 +54,27 @@ public class DAOFacturasImpl implements DAOFacturas {
 			Iterator<VOGuia> iter = listaGuias.iterator();
 			while(iter.hasNext()){
 				guia = iter.next();
-				totalGuias.add(guia.getTotal());
+				totalGuias = totalGuias.add(guia.getTotal());
 				
 				System.out.println("DAOFAC precio guia: "+guia.getTotal().toString());
 				System.out.println("DAOFAC total guias en: "+totalGuias.toString()+", guia: "+guia.getNumero());
 			}
-			
+
 			//DEBUG
 			System.out.println("DAOFAC total guias final: "+totalGuias.toString());
 			
+			MathContext mc_8 = new MathContext(8,RoundingMode.HALF_UP);
+
 			/*
 			 * Total Guias Neto
 			 */
-			totalNeto = totalGuias.divide(factor);
-			
+			//totalNeto = totalGuias.divide(factor);
+			totalNeto = totalGuias.divide(factor, mc_8); // EL RESULTADO ES MUY GRANDE!!!
+
 			/*
 			 * Total IVA
 			 */
-			totalIVA = totalNeto.multiply(IVA);
+			totalIVA = totalNeto.multiply(IVA, mc_8);
 			
 			/*
 			 * Total Factura
@@ -78,16 +83,16 @@ public class DAOFacturasImpl implements DAOFacturas {
 			
 			System.out.println("Numero de guias a facturar: "+numeroGuias);
 			System.out.println("valores factura: ");
-			System.out.println("total neto: "+totalNeto);
-			System.out.println("total iva: "+totalIVA);
-			System.out.println("total factura: "+totalFactura);
+			System.out.println("total neto: "+totalNeto.setScale(0,BigDecimal.ROUND_HALF_UP).toString());
+			System.out.println("total iva: "+totalIVA.setScale(0,BigDecimal.ROUND_HALF_UP).toString());
+			System.out.println("total factura: "+totalFactura.setScale(0,BigDecimal.ROUND_HALF_UP).toString());
 			
 			pstm.setInt(1, numerofactura);
 			pstm.setString(2, cliente.getId());
 			pstm.setDate(3, fechaSQL);
-			pstm.setBigDecimal(4, totalNeto);
-			pstm.setBigDecimal(5, totalIVA);
-			pstm.setBigDecimal(6, totalFactura);
+			pstm.setBigDecimal(4, totalNeto.setScale(0,BigDecimal.ROUND_HALF_UP));
+			pstm.setBigDecimal(5, totalIVA.setScale(0,BigDecimal.ROUND_HALF_UP));
+			pstm.setBigDecimal(6, totalFactura.setScale(0,BigDecimal.ROUND_HALF_UP));
 			
 			int result = pstm.executeUpdate();
 			System.out.println("result: "+result);
