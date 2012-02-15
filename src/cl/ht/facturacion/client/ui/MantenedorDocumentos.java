@@ -125,6 +125,7 @@ public class MantenedorDocumentos {
 		gridData = new GridData(GridData.BEGINNING, GridData.CENTER, false, false);
 		gridData.widthHint = 80;
 		txtBusqAno.setLayoutData(new GridData(GridData.BEGINNING, GridData.CENTER, false, false));
+		txtBusqAno.setTextLimit(4);
 		
 	    btnBusqueda = new Button(compoBusqueda, SWT.PUSH);
 	    btnBusqueda.setText("Buscar");

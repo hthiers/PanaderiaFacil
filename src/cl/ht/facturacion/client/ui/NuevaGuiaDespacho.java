@@ -1250,6 +1250,11 @@ public class NuevaGuiaDespacho {
 			public void focusLost(org.eclipse.swt.events.FocusEvent e) {
 				// TODO Auto-generated method stub
 				if(!cantidad.getText().isEmpty() || !cantidad.getText().equals("")){
+					
+					//replace "," with "."
+					if(cantidad.getText().contains(","))
+						cantidad.setText(cantidad.getText().replace(",","."));
+					
 					BigDecimal valorTotal = new BigDecimal(precioUnit.getText()); //test
 					
 					if(!precioUnit.getText().isEmpty() || !precioUnit.getText().equals("")){
@@ -1420,6 +1425,10 @@ public class NuevaGuiaDespacho {
 			public void focusLost(org.eclipse.swt.events.FocusEvent e) {
 				// TODO Auto-generated method stub
 				if(!cantidad2.getText().isEmpty() || !cantidad2.getText().equals("")){
+					
+					//replace "," with "."
+					if(cantidad2.getText().contains(","))
+						cantidad2.setText(cantidad2.getText().replace(",","."));
 					
 					BigDecimal valorTotal = new BigDecimal(precioUnit2.getText());
 					
@@ -1593,6 +1602,10 @@ public class NuevaGuiaDespacho {
 			public void focusLost(org.eclipse.swt.events.FocusEvent e) {
 				// TODO Auto-generated method stub
 				if(!cantidad3.getText().isEmpty() || !cantidad3.getText().equals("")){
+					
+					//replace "," with "."
+					if(cantidad3.getText().contains(","))
+						cantidad3.setText(cantidad3.getText().replace(",","."));
 					
 					BigDecimal valorTotal = new BigDecimal(precioUnit3.getText());
 					
